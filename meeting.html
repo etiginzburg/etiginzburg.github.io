@@ -1192,7 +1192,7 @@
                         </label>
                         <select id="numberOfPeople" class="form-select" required>
                             <option value="" data-translate="select-people">בחרי מספר בנות</option>
-                            <option value="1" data-translate="people-1">1 בת</option>
+                            <option value="1" data-translate="people-1">בת 1</option>
                             <option value="2" data-translate="people-2">2 בנות</option>
                             <option value="3" data-translate="people-3">3 בנות</option>
                             <option value="4" data-translate="people-4">4 בנות</option>
@@ -1463,7 +1463,7 @@
                 'placeholder-phone': '050-1234567',
                 'placeholder-email': 'your-email@example.com',
                 'select-people': 'בחרי מספר בנות',
-                'people-1': '1 בת',
+                'people-1': 'בת 1',
                 'people-2': '2 בנות',
                 'people-3': '3 בנות',
                 'people-4': '4 בנות',
@@ -2347,7 +2347,7 @@
 
             // Format people count in current language
             const peopleText = currentLanguage === 'he'
-                ? `${people} ${people === 1 ? t('girl') : t('girls')}`
+                ? (people === 1 ? `בת 1` : `${people} ${t('girls')}`)
                 : `${people} ${people === 1 ? t('girl') : t('girls')}`;
 
             // Update confirmation fields
