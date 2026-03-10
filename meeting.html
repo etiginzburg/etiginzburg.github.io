@@ -697,6 +697,158 @@
             margin-bottom: 1.5rem;
         }
 
+        /* Manage existing appointment styles */
+        .manage-existing-divider {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            padding-top: 1.25rem;
+            border-top: 1px dashed #e0e0e0;
+            flex-wrap: wrap;
+        }
+
+        .manage-existing-divider span {
+            color: #888;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .btn-manage-existing {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.45rem 1rem;
+            background: transparent;
+            border: 1.5px solid #d0d0d0;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: inherit;
+        }
+
+        .btn-manage-existing:hover {
+            border-color: #e91e8c;
+            color: #e91e8c;
+            background: #fff0f6;
+        }
+
+        .btn-manage-existing i {
+            font-size: 0.85rem;
+        }
+
+        /* Step icon alternative (for management screens) */
+        .step-icon-alt {
+            font-size: 1.8rem;
+            color: #e91e8c;
+            margin-left: 1rem;
+        }
+
+        [dir="ltr"] .step-icon-alt {
+            margin-left: 0;
+            margin-right: 1rem;
+        }
+
+        /* Step description text */
+        .step-description {
+            color: #555;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        /* OTP input - large centered digits */
+        .otp-input {
+            text-align: center;
+            font-size: 1.8rem;
+            letter-spacing: 8px;
+            font-weight: 600;
+        }
+
+        .otp-resend-text {
+            text-align: center;
+            margin-top: 1.25rem;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .btn-link {
+            background: none;
+            border: none;
+            color: #e91e8c;
+            cursor: pointer;
+            font-size: inherit;
+            font-family: inherit;
+            padding: 0;
+            text-decoration: underline;
+        }
+
+        /* Manage actions */
+        .manage-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .manage-actions .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .manage-back-link {
+            margin-top: 1.25rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #e0e0e0;
+        }
+
+        .manage-back-link .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* btn-danger */
+        .btn-danger {
+            background: linear-gradient(135deg, #e53935, #c62828);
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: linear-gradient(135deg, #c62828, #b71c1c);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+        }
+
+        /* Appointment list item */
+        .appt-list-item {
+            border: 1.5px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .appt-list-item:hover {
+            border-color: #e91e8c;
+            background: #fff0f6;
+        }
+
+        .appt-list-item h4 {
+            margin: 0 0 0.4rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .appt-list-item p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
         /* Mobile Responsiveness - Tablet and larger phones (768px and below) */
         @media screen and (max-width: 768px) {
 
@@ -1211,6 +1363,174 @@
                         <i class="fas fa-arrow-left" id="arrowIcon"></i>
                     </button>
                 </form>
+
+                <!-- Manage existing appointment link -->
+                <div class="manage-existing-divider">
+                    <span data-translate="manage-existing-label">יש לך פגישה קיימת?</span>
+                    <button type="button" class="btn-manage-existing" id="manageExistingBtn">
+                        <i class="fas fa-calendar-edit"></i>
+                        <span data-translate="manage-existing-btn">שינוי או ביטול פגישה קיימת</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- OTP Request Step -->
+            <div class="step-container hidden" id="otpRequestStep">
+                <div class="step-header">
+                    <div class="step-content">
+                        <i class="fas fa-key step-icon-alt"></i>
+                        <h2 class="step-title" data-translate="otp-request-title">אימות זהות</h2>
+                    </div>
+                </div>
+                <p class="step-description" data-translate="otp-request-desc">הכניסי את כתובת המייל שקבעת איתה את הפגישה ונשלח לך קוד אימות.</p>
+                <div class="form-group">
+                    <label for="otpEmail" class="form-label">
+                        <i class="fas fa-envelope"></i>
+                        <span data-translate="label-email">כתובת מייל</span>
+                    </label>
+                    <input type="email" id="otpEmail" class="form-input"
+                        data-translate-placeholder="placeholder-email" placeholder="your-email@example.com"
+                        autocomplete="email">
+                    <div class="error-message" id="otpEmailError"></div>
+                </div>
+                <div class="step-actions">
+                    <button type="button" class="btn btn-secondary" id="backFromOtpRequest">
+                        <i class="fas fa-arrow-right"></i>
+                        <span data-translate="back">חזור</span>
+                    </button>
+                    <button type="button" class="btn btn-primary" id="sendOtpBtn">
+                        <i class="fas fa-paper-plane"></i>
+                        <span data-translate="otp-send-btn">שלחי קוד</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- OTP Verify Step -->
+            <div class="step-container hidden" id="otpVerifyStep">
+                <div class="step-header">
+                    <div class="step-content">
+                        <i class="fas fa-shield-alt step-icon-alt"></i>
+                        <h2 class="step-title" data-translate="otp-verify-title">הכניסי את הקוד</h2>
+                    </div>
+                </div>
+                <p class="step-description" data-translate="otp-verify-desc">קוד בן 6 ספרות נשלח למייל שלך. הקוד תקף ל-10 דקות.</p>
+                <div class="form-group">
+                    <label for="otpCode" class="form-label">
+                        <i class="fas fa-hashtag"></i>
+                        <span data-translate="otp-code-label">קוד האימות</span>
+                    </label>
+                    <input type="text" id="otpCode" class="form-input otp-input"
+                        maxlength="6" inputmode="numeric" pattern="[0-9]*"
+                        data-translate-placeholder="otp-code-placeholder" placeholder="123456"
+                        autocomplete="one-time-code">
+                    <div class="error-message" id="otpCodeError"></div>
+                </div>
+                <div class="step-actions">
+                    <button type="button" class="btn btn-secondary" id="backFromOtpVerify">
+                        <i class="fas fa-arrow-right"></i>
+                        <span data-translate="back">חזור</span>
+                    </button>
+                    <button type="button" class="btn btn-primary" id="verifyOtpBtn">
+                        <i class="fas fa-check"></i>
+                        <span data-translate="otp-verify-btn">אמתי</span>
+                    </button>
+                </div>
+                <p class="otp-resend-text">
+                    <span data-translate="otp-no-email">לא קיבלת מייל?</span>
+                    <button type="button" class="btn-link" id="resendOtpBtn" data-translate="otp-resend">שלחי שוב</button>
+                </p>
+            </div>
+
+            <!-- Manage Appointment Step (shown after token link OR after OTP verify with single result) -->
+            <div class="step-container hidden" id="manageStep">
+                <div class="step-header">
+                    <div class="step-content">
+                        <i class="fas fa-calendar-check step-icon-alt"></i>
+                        <h2 class="step-title" data-translate="manage-title">ניהול הפגישה שלך</h2>
+                    </div>
+                </div>
+
+                <div class="confirmation-card" id="manageAppointmentCard">
+                    <h3 class="confirmation-title">
+                        <i class="fas fa-info-circle"></i>
+                        <span data-translate="manage-details-title">פרטי הפגישה הקיימת</span>
+                    </h3>
+                    <div id="manageAppointmentDetails"></div>
+                </div>
+
+                <div class="manage-actions">
+                    <button type="button" class="btn btn-primary" id="rescheduleBtn">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span data-translate="reschedule-btn">שינוי מועד הפגישה</span>
+                    </button>
+                    <button type="button" class="btn btn-danger" id="cancelAppointmentBtn">
+                        <i class="fas fa-trash-alt"></i>
+                        <span data-translate="cancel-appointment-btn">ביטול הפגישה</span>
+                    </button>
+                </div>
+                <div class="manage-back-link">
+                    <button type="button" class="btn btn-secondary" id="backToNewBooking">
+                        <i class="fas fa-plus"></i>
+                        <span data-translate="new-booking-btn">קביעת פגישה חדשה</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Multiple Appointments List (after OTP with several results) -->
+            <div class="step-container hidden" id="appointmentListStep">
+                <div class="step-header">
+                    <div class="step-content">
+                        <i class="fas fa-list step-icon-alt"></i>
+                        <h2 class="step-title" data-translate="appt-list-title">הפגישות שלך</h2>
+                    </div>
+                </div>
+                <p class="step-description" data-translate="appt-list-desc">בחרי את הפגישה שברצונך לנהל.</p>
+                <div id="appointmentListContainer"></div>
+                <div class="step-actions" style="margin-top:1.5rem;">
+                    <button type="button" class="btn btn-secondary" id="backFromApptList">
+                        <i class="fas fa-arrow-right"></i>
+                        <span data-translate="back">חזור</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cancel Confirmation Step -->
+            <div class="step-container hidden" id="cancelConfirmStep">
+                <div class="step-header">
+                    <div class="step-content">
+                        <i class="fas fa-exclamation-triangle step-icon-alt" style="color:#e53935;"></i>
+                        <h2 class="step-title" data-translate="cancel-confirm-title">אישור ביטול</h2>
+                    </div>
+                </div>
+                <p class="step-description" data-translate="cancel-confirm-desc">את בטוחה שברצונך לבטל את הפגישה? לא ניתן לבטל פעולה זו.</p>
+                <div id="cancelConfirmDetails"></div>
+                <div class="step-actions" style="margin-top:2rem;">
+                    <button type="button" class="btn btn-secondary" id="backFromCancelConfirm">
+                        <i class="fas fa-arrow-right"></i>
+                        <span data-translate="back">חזור</span>
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmCancelBtn">
+                        <i class="fas fa-trash-alt"></i>
+                        <span data-translate="confirm-cancel-btn">כן, בטלי את הפגישה</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cancellation Success -->
+            <div class="step-container hidden" id="cancelSuccessStep">
+                <div class="success-message">
+                    <div class="success-icon" style="background:linear-gradient(135deg,#ef9a9a,#e57373);">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h2 class="success-title" data-translate="cancel-success-title">הפגישה בוטלה בהצלחה</h2>
+                    <p class="success-subtitle" data-translate="cancel-success-subtitle">תקבלי אישור ביטול בדוא"ל</p>
+                    <div class="success-actions">
+                        <button type="button" class="btn btn-primary" id="bookAfterCancel">
+                            <i class="fas fa-plus"></i>
+                            <span data-translate="book-another">קבעי פגישה נוספת</span>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Step 2: Date Selection -->
@@ -1435,6 +1755,12 @@
         let calendarLink = null;
         let currentLanguage = 'he'; // Default to Hebrew
 
+        // Management flow state
+        let manageToken = null;          // Active management token (from URL or OTP flow)
+        let manageAppointment = null;    // Appointment details for the manage screen
+        let otpEmailValue = '';          // Email used for OTP flow
+        let isRescheduling = false;      // True when the booking flow is being used for rescheduling
+
         // Pre-loading cache and state variables
         // These variables manage background loading of time slots to improve user experience
         let availabilityCache = {};       // Cache of daily availability {dateStr: {businessHours, busySlots}}
@@ -1492,7 +1818,7 @@
                 'success-subtitle': 'תקבלי אישור בדוא"ל בקרוב',
                 'add-calendar': 'הוסיפי ליומן שלך',
                 'book-another': 'קבעי פגישה נוספת',
-                'footer-text': '© 2024 מערכת קביעת תורים - נבנה במיוחד עבורך',
+                'footer-text': '© 2024 מערכת קביעת פגישות - נבנה במיוחד עבורך',
                 'booking-progress': 'קובע את הפגישה...',
                 'duration-text': 'משך הפגישה:',
                 'selected-date': 'תאריך נבחר:',
@@ -1511,7 +1837,38 @@
                 'error-email-invalid': 'כתובת מייל לא תקינה',
                 'error-people-required': 'אנא בחרי מספר בנות',
                 'error-api': 'שגיאה בתקשורת עם השרת. נסי שוב.',
-                'error-config': 'שגיאה בטעינת ההגדרות. נסי לרענן את הדף.'
+                'error-config': 'שגיאה בטעינת ההגדרות. נסי לרענן את הדף.',
+                'manage-existing-label': 'יש לך פגישה קיימת?',
+                'manage-existing-btn': 'שינוי או ביטול פגישה קיימת',
+                'otp-request-title': 'אימות זהות',
+                'otp-request-desc': 'הכניסי את כתובת המייל שקבעת איתה את הפגישה ונשלח לך קוד אימות.',
+                'otp-send-btn': 'שלחי קוד',
+                'otp-verify-title': 'הכניסי את הקוד',
+                'otp-verify-desc': 'קוד בן 6 ספרות נשלח למייל שלך. הקוד תקף ל-10 דקות.',
+                'otp-code-label': 'קוד האימות',
+                'otp-code-placeholder': '123456',
+                'otp-verify-btn': 'אמתי',
+                'otp-no-email': 'לא קיבלת מייל?',
+                'otp-resend': 'שלחי שוב',
+                'manage-title': 'ניהול הפגישה שלך',
+                'manage-details-title': 'פרטי הפגישה הקיימת',
+                'reschedule-btn': 'שינוי מועד הפגישה',
+                'cancel-appointment-btn': 'ביטול הפגישה',
+                'new-booking-btn': 'קביעת פגישה חדשה',
+                'appt-list-title': 'הפגישות שלך',
+                'appt-list-desc': 'בחרי את הפגישה שברצונך לנהל.',
+                'cancel-confirm-title': 'אישור ביטול',
+                'cancel-confirm-desc': 'את בטוחה שברצונך לבטל את הפגישה? לא ניתן לבטל פעולה זו.',
+                'confirm-cancel-btn': 'כן, בטלי את הפגישה',
+                'cancel-success-title': 'הפגישה בוטלה בהצלחה',
+                'cancel-success-subtitle': 'תקבלי אישור ביטול בדוא"ל',
+                'reschedule-success-title': 'הפגישה שונתה בהצלחה!',
+                'reschedule-success-subtitle': 'תקבלי אישור בדוא"ל בקרוב',
+                'manage-expired': 'לא ניתן לשנות פגישה שכבר התחילה.',
+                'manage-invalid-token': 'הקישור אינו תקין או שפג תוקפו.',
+                'manage-loading': 'טוען פרטי הפגישה...',
+                'reschedule-progress': 'מעדכן את הפגישה...',
+                'cancel-progress': 'מבטל את הפגישה...'
             },
             en: {
                 'page-title': 'Book an Appointment for Fitting',
@@ -1559,7 +1916,7 @@
                 'success-subtitle': 'You will receive a confirmation email shortly',
                 'add-calendar': 'Add to Your Calendar',
                 'book-another': 'Book Another Appointment',
-                'footer-text': '© 2024 Appointment Booking System - Built specially for you',
+                'footer-text': '© 2024 Appointment Scheduling System - Built specially for you',
                 'booking-progress': 'Booking your appointment...',
                 'duration-text': 'Duration:',
                 'selected-date': 'Selected date:',
@@ -1578,7 +1935,38 @@
                 'error-email-invalid': 'Invalid email address',
                 'error-people-required': 'Please select number of girls',
                 'error-api': 'Server communication error. Please try again.',
-                'error-config': 'Error loading settings. Please refresh the page.'
+                'error-config': 'Error loading settings. Please refresh the page.',
+                'manage-existing-label': 'Have an existing appointment?',
+                'manage-existing-btn': 'Change or Cancel Appointment',
+                'otp-request-title': 'Identity Verification',
+                'otp-request-desc': 'Enter the email address you used to book your appointment and we will send you a verification code.',
+                'otp-send-btn': 'Send Code',
+                'otp-verify-title': 'Enter the Code',
+                'otp-verify-desc': 'A 6-digit code was sent to your email. The code is valid for 10 minutes.',
+                'otp-code-label': 'Verification Code',
+                'otp-code-placeholder': '123456',
+                'otp-verify-btn': 'Verify',
+                'otp-no-email': "Didn't receive an email?",
+                'otp-resend': 'Send again',
+                'manage-title': 'Manage Your Appointment',
+                'manage-details-title': 'Current Appointment Details',
+                'reschedule-btn': 'Reschedule Appointment',
+                'cancel-appointment-btn': 'Cancel Appointment',
+                'new-booking-btn': 'Book a New Appointment',
+                'appt-list-title': 'Your Appointments',
+                'appt-list-desc': 'Select the appointment you want to manage.',
+                'cancel-confirm-title': 'Confirm Cancellation',
+                'cancel-confirm-desc': 'Are you sure you want to cancel this appointment? This action cannot be undone.',
+                'confirm-cancel-btn': 'Yes, Cancel Appointment',
+                'cancel-success-title': 'Appointment Cancelled Successfully',
+                'cancel-success-subtitle': 'You will receive a cancellation confirmation email',
+                'reschedule-success-title': 'Appointment Rescheduled Successfully!',
+                'reschedule-success-subtitle': 'You will receive a confirmation email shortly',
+                'manage-expired': 'Cannot manage an appointment that has already started.',
+                'manage-invalid-token': 'This link is invalid or has expired.',
+                'manage-loading': 'Loading appointment details...',
+                'reschedule-progress': 'Updating your appointment...',
+                'cancel-progress': 'Cancelling your appointment...'
             }
         };
 
@@ -1697,7 +2085,7 @@
                     handleConfigLoaded({
                         baseDuration: 30,
                         additionalPersonDuration: 15,
-                        businessName: 'מערכת קביעת תורים'
+                        businessName: 'אתי גינזבורג שמלות ערב'
                     });
                 }
             } catch (error) {
@@ -1706,7 +2094,7 @@
                 handleConfigLoaded({
                     baseDuration: 30,
                     additionalPersonDuration: 15,
-                    businessName: 'מערכת קביעת תורים'
+                    businessName: 'אתי גינזבורג שמלות ערב'
                 });
             }
 
@@ -1716,8 +2104,19 @@
             // Initialize calendar
             initializeCalendar();
 
-            // Apply initial language
-            applyLanguage(currentLanguage);
+            // Check for management token in URL (?action=manage&token=...)
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlAction = urlParams.get('action');
+            const urlToken = urlParams.get('token');
+
+            if (urlAction === 'manage' && urlToken) {
+                // Load appointment by token; language is applied after data is fetched
+                applyLanguage(currentLanguage);
+                await handleTokenManageLink(urlToken);
+            } else {
+                // Normal booking flow – apply default language
+                applyLanguage(currentLanguage);
+            }
 
             console.log('Appointment booking system initialized (standalone mode)');
         }
@@ -1749,7 +2148,14 @@
             document.getElementById('continueToDate').addEventListener('click', () => goToStep(2));
 
             // Step 2 - Date Selection
-            document.getElementById('backToStep1').addEventListener('click', () => goToStep(1));
+            document.getElementById('backToStep1').addEventListener('click', () => {
+                if (isRescheduling) {
+                    isRescheduling = false;
+                    showStep('manageStep');
+                } else {
+                    goToStep(1);
+                }
+            });
             document.getElementById('continueToTime').addEventListener('click', () => goToStep(3));
             document.getElementById('prevMonth').addEventListener('click', () => changeMonth(-1));
             document.getElementById('nextMonth').addEventListener('click', () => changeMonth(1));
@@ -1765,6 +2171,29 @@
             // Success step
             document.getElementById('bookAnother').addEventListener('click', resetForm);
             document.getElementById('addToCalendar').addEventListener('click', addToCalendar);
+
+            // Manage existing appointment (OTP flow)
+            document.getElementById('manageExistingBtn').addEventListener('click', () => showStep('otpRequestStep'));
+            document.getElementById('backFromOtpRequest').addEventListener('click', () => showStep('step1'));
+            document.getElementById('sendOtpBtn').addEventListener('click', handleSendOtp);
+            document.getElementById('backFromOtpVerify').addEventListener('click', () => showStep('otpRequestStep'));
+            document.getElementById('verifyOtpBtn').addEventListener('click', handleVerifyOtp);
+            document.getElementById('resendOtpBtn').addEventListener('click', handleSendOtp);
+
+            // Manage step actions
+            document.getElementById('rescheduleBtn').addEventListener('click', handleRescheduleClick);
+            document.getElementById('cancelAppointmentBtn').addEventListener('click', handleCancelClick);
+            document.getElementById('backToNewBooking').addEventListener('click', resetForm);
+
+            // Appointment list (multiple appointments after OTP)
+            document.getElementById('backFromApptList').addEventListener('click', () => showStep('otpRequestStep'));
+
+            // Cancel confirm
+            document.getElementById('backFromCancelConfirm').addEventListener('click', () => showStep('manageStep'));
+            document.getElementById('confirmCancelBtn').addEventListener('click', performCancel);
+
+            // Cancel success
+            document.getElementById('bookAfterCancel').addEventListener('click', resetForm);
         }
 
         /**
@@ -2381,17 +2810,76 @@
          */
         async function confirmBooking() {
             // Show loading overlay
+            const loadingP = document.getElementById('loadingOverlay').querySelector('p');
+            loadingP.textContent = t('booking-progress');
             document.getElementById('loadingOverlay').classList.remove('hidden');
 
             try {
-                const response = await apiPost({
-                    action: 'bookAppointment',
-                    appointmentData: appointmentData
-                });
-
-                handleBookingSuccess(response);
+                if (isRescheduling && manageToken) {
+                    // Reschedule mode: call rescheduleAppointment instead of bookAppointment
+                    loadingP.textContent = t('reschedule-progress');
+                    // Pass newSlot as raw JSON string; apiGet (URLSearchParams) will encode it
+                    const response = await apiGet({
+                        action: 'rescheduleAppointment',
+                        token: manageToken,
+                        newDate: appointmentData.date,
+                        newSlot: JSON.stringify(appointmentData.selectedSlot)
+                    });
+                    handleRescheduleSuccess(response);
+                } else {
+                    // Normal booking
+                    const response = await apiPost({
+                        action: 'bookAppointment',
+                        appointmentData: appointmentData
+                    });
+                    handleBookingSuccess(response);
+                }
             } catch (error) {
                 handleBookingError(error);
+            }
+        }
+
+        /**
+         * Handle successful reschedule response
+         */
+        function handleRescheduleSuccess(result) {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+
+            if (result && result.slotTaken) {
+                const msg = currentLanguage === 'he'
+                    ? 'השעה שבחרת נתפסה. אנא בחרי שעה אחרת.'
+                    : 'The time slot you selected has been taken. Please choose another time.';
+                alert(msg);
+                clearAllCache();
+                selectedTimeSlot = null;
+                document.getElementById('continueToConfirm').disabled = true;
+                goToStep(2);
+                startPreloading();
+                return;
+            }
+
+            if (result && result.success) {
+                calendarLink = result.calendarLink;
+                isRescheduling = false;
+                manageToken = null;
+                manageAppointment = null;
+
+                // Show the regular success screen with reschedule success title
+                goToStep('success');
+                document.querySelector('#successStep .success-title').textContent = t('reschedule-success-title');
+                document.querySelector('#successStep .success-subtitle').textContent = t('reschedule-success-subtitle');
+
+                const successDetails = document.getElementById('successDetails');
+                const addressText = currentLanguage === 'he' ? 'רב עמרם 18, קומה 2, בית שמש' : 'Rav Amram 18, 2nd Floor, Beit Shemesh';
+                successDetails.innerHTML = `
+                    <div class="confirmation-item"><span class="confirmation-label">${t('confirm-name')}</span><span class="confirmation-value">${appointmentData.name}</span></div>
+                    <div class="confirmation-item"><span class="confirmation-label">${t('confirm-date')}</span><span class="confirmation-value">${formatDateInLanguage(selectedDate)}</span></div>
+                    <div class="confirmation-item"><span class="confirmation-label">${t('confirm-time')}</span><span class="confirmation-value">${selectedTimeSlot.start} - ${selectedTimeSlot.end}</span></div>
+                    <div class="confirmation-item"><span class="confirmation-label">${t('confirm-duration')}</span><span class="confirmation-value">${formatDurationInLanguage(result.duration)}</span></div>
+                    <div class="confirmation-item"><span class="confirmation-label">${t('confirm-address')}</span><span class="confirmation-value">${addressText}</span></div>
+                `;
+            } else {
+                alert((result && result.message) || t('error-api'));
             }
         }
 
@@ -2519,6 +3007,10 @@
             selectedTimeSlot = null;
             appointmentData = {};
             calendarLink = null;
+            manageToken = null;
+            manageAppointment = null;
+            otpEmailValue = '';
+            isRescheduling = false;
 
             // Clear time slots cache and restart preloading for fresh data
             clearAllCache();
@@ -2549,9 +3041,282 @@
             // Scroll to top
             window.scrollTo(0, 0);
 
+            // Clean up URL params (remove ?action=manage&token=... from address bar)
+            if (window.history && window.history.replaceState) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+
             // Restart preloading for fresh data
             startPreloading();
         }
+
+        // =====================================================================
+        // APPOINTMENT MANAGEMENT FUNCTIONS
+        // =====================================================================
+
+        /**
+         * Shows a single step panel (hides all others).
+         */
+        function showStep(stepId) {
+            document.querySelectorAll('.step-container').forEach(el => el.classList.add('hidden'));
+            const el = document.getElementById(stepId);
+            if (el) {
+                el.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+        }
+
+        /**
+         * Handles opening the page via a management token link (?action=manage&token=xxx).
+         * Fetches appointment details, applies the stored language, and shows the manage screen.
+         */
+        async function handleTokenManageLink(token) {
+            // Show loading state
+            showStep('step1'); // keep step1 visible as fallback
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+            document.getElementById('loadingOverlay').querySelector('p').setAttribute('data-translate', 'manage-loading');
+            document.getElementById('loadingOverlay').querySelector('p').textContent = t('manage-loading');
+
+            try {
+                const result = await apiGet({ action: 'getAppointmentByToken', token: token });
+                document.getElementById('loadingOverlay').classList.add('hidden');
+
+                if (!result.success) {
+                    const msg = result.expired ? t('manage-expired') : t('manage-invalid-token');
+                    alert(msg);
+                    showStep('step1');
+                    return;
+                }
+
+                // Apply the language stored with the appointment
+                const apptLang = result.appointmentDetails.language || 'he';
+                currentLanguage = apptLang;
+                applyLanguage(currentLanguage);
+
+                // Store state and show manage screen
+                manageToken = token;
+                manageAppointment = result.appointmentDetails;
+                renderManageScreen(manageAppointment);
+                showStep('manageStep');
+            } catch (err) {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                console.error('handleTokenManageLink error:', err);
+                alert(t('error-api'));
+                showStep('step1');
+            }
+        }
+
+        /**
+         * Renders the manage screen with the appointment details card.
+         */
+        function renderManageScreen(appt) {
+            const start = new Date(appt.startTimeIso);
+            const end = new Date(appt.endTimeIso);
+            const lang = currentLanguage;
+
+            const dateStr = lang === 'he'
+                ? (() => {
+                    const days = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+                    return `יום ${days[start.getDay()]}, ${start.getDate()} ב${hebrewMonths[start.getMonth()]} ${start.getFullYear()}`;
+                })()
+                : (() => {
+                    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+                    return `${days[start.getDay()]}, ${englishMonths[start.getMonth()]} ${start.getDate()}, ${start.getFullYear()}`;
+                })();
+
+            const startStr = `${String(start.getHours()).padStart(2,'0')}:${String(start.getMinutes()).padStart(2,'0')}`;
+            const endStr   = `${String(end.getHours()).padStart(2,'0')}:${String(end.getMinutes()).padStart(2,'0')}`;
+
+            const detailsEl = document.getElementById('manageAppointmentDetails');
+            detailsEl.innerHTML = `
+                <div class="confirmation-item"><span class="confirmation-label">${t('confirm-name')}</span><span class="confirmation-value">${appt.clientName}</span></div>
+                <div class="confirmation-item"><span class="confirmation-label">${t('confirm-date')}</span><span class="confirmation-value">${dateStr}</span></div>
+                <div class="confirmation-item"><span class="confirmation-label">${t('confirm-time')}</span><span class="confirmation-value">${startStr} - ${endStr}</span></div>
+                <div class="confirmation-item"><span class="confirmation-label">${t('confirm-duration')}</span><span class="confirmation-value">${formatDurationInLanguage(appt.duration)}</span></div>
+                <div class="confirmation-item"><span class="confirmation-label">${t('confirm-people')}</span><span class="confirmation-value">${appt.numberOfPeople} ${appt.numberOfPeople === 1 ? t('girl') : t('girls')}</span></div>
+            `;
+
+            // Also populate cancel confirm details
+            document.getElementById('cancelConfirmDetails').innerHTML = detailsEl.innerHTML;
+        }
+
+        /**
+         * Handles "send OTP" button – validates email then calls backend sendOTP.
+         */
+        async function handleSendOtp() {
+            const emailInput = document.getElementById('otpEmail');
+            const emailErr   = document.getElementById('otpEmailError');
+            const email = emailInput.value.trim();
+            emailErr.classList.remove('show');
+
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                emailErr.textContent = t('error-email-invalid');
+                emailErr.classList.add('show');
+                return;
+            }
+
+            otpEmailValue = email;
+            document.getElementById('sendOtpBtn').disabled = true;
+
+            try {
+                const result = await apiGet({ action: 'sendOTP', email: email, lang: currentLanguage });
+                if (result.success) {
+                    showStep('otpVerifyStep');
+                } else {
+                    alert(result.message || t('error-api'));
+                }
+            } catch (err) {
+                alert(t('error-api'));
+            } finally {
+                document.getElementById('sendOtpBtn').disabled = false;
+            }
+        }
+
+        /**
+         * Handles "verify OTP" button – validates code then fetches appointments.
+         */
+        async function handleVerifyOtp() {
+            const codeInput = document.getElementById('otpCode');
+            const codeErr   = document.getElementById('otpCodeError');
+            const code = codeInput.value.trim();
+            codeErr.classList.remove('show');
+
+            if (!code || !/^\d{6}$/.test(code)) {
+                codeErr.textContent = currentLanguage === 'he' ? 'הקוד חייב להיות 6 ספרות.' : 'Code must be 6 digits.';
+                codeErr.classList.add('show');
+                return;
+            }
+
+            document.getElementById('verifyOtpBtn').disabled = true;
+
+            try {
+                const result = await apiGet({ action: 'verifyOTPAndGetAppointments', email: otpEmailValue, code: code });
+
+                if (!result.success) {
+                    if (result.expired) {
+                        codeErr.textContent = currentLanguage === 'he' ? 'הקוד פג תוקף. אנא בקשי קוד חדש.' : 'Code expired. Please request a new code.';
+                    } else {
+                        codeErr.textContent = result.message || (currentLanguage === 'he' ? 'קוד שגוי.' : 'Incorrect code.');
+                    }
+                    codeErr.classList.add('show');
+                    return;
+                }
+
+                const appointments = result.appointments || [];
+                if (appointments.length === 0) {
+                    const msg = currentLanguage === 'he' ? 'לא נמצאו פגישות עתידיות עבור מייל זה.' : 'No upcoming appointments found for this email.';
+                    alert(msg);
+                    showStep('otpRequestStep');
+                    return;
+                }
+
+                if (appointments.length === 1) {
+                    // Single appointment – go directly to manage screen
+                    manageToken = appointments[0].token;
+                    manageAppointment = appointments[0];
+                    renderManageScreen(manageAppointment);
+                    showStep('manageStep');
+                } else {
+                    // Multiple appointments – show list
+                    renderAppointmentList(appointments);
+                    showStep('appointmentListStep');
+                }
+                // Clear OTP input
+                codeInput.value = '';
+            } catch (err) {
+                alert(t('error-api'));
+            } finally {
+                document.getElementById('verifyOtpBtn').disabled = false;
+            }
+        }
+
+        /**
+         * Renders the list of appointments (for OTP flow with multiple results).
+         */
+        function renderAppointmentList(appointments) {
+            const container = document.getElementById('appointmentListContainer');
+            container.innerHTML = '';
+            appointments.forEach(appt => {
+                const start = new Date(appt.startTimeIso);
+                const lang = currentLanguage;
+                const dateStr = lang === 'he'
+                    ? `יום ${['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'][start.getDay()]}, ${start.getDate()} ב${hebrewMonths[start.getMonth()]} ${start.getFullYear()}`
+                    : `${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][start.getDay()]}, ${englishMonths[start.getMonth()]} ${start.getDate()}, ${start.getFullYear()}`;
+                const timeStr = `${String(start.getHours()).padStart(2,'0')}:${String(start.getMinutes()).padStart(2,'0')}`;
+
+                const item = document.createElement('div');
+                item.className = 'appt-list-item';
+                item.innerHTML = `<h4>${dateStr}</h4><p>${timeStr} &bull; ${appt.numberOfPeople} ${appt.numberOfPeople === 1 ? t('girl') : t('girls')}</p>`;
+                item.addEventListener('click', () => {
+                    manageToken = appt.token;
+                    manageAppointment = appt;
+                    renderManageScreen(appt);
+                    showStep('manageStep');
+                });
+                container.appendChild(item);
+            });
+        }
+
+        /**
+         * Handles "reschedule" button click – loads appointment data into the booking flow
+         * and jumps to step 2 (date selection), but in reschedule mode.
+         */
+        function handleRescheduleClick() {
+            if (!manageAppointment) return;
+            // Pre-fill personal details from the stored appointment
+            document.getElementById('clientName').value  = manageAppointment.clientName || '';
+            document.getElementById('clientPhone').value = manageAppointment.clientPhone || '';
+            document.getElementById('clientEmail').value = manageAppointment.clientEmail || '';
+            document.getElementById('numberOfPeople').value = String(manageAppointment.numberOfPeople);
+            // Trigger people change to compute duration and enable calendar
+            handlePeopleChange();
+            // Mark the form as valid so the calendar step is reachable
+            document.getElementById('continueToDate').disabled = false;
+            // Switch to reschedule mode
+            isRescheduling = true;
+            // Go to step 2 (date/time selection)
+            showStep('step2');
+            renderCalendar();
+        }
+
+        /**
+         * Handles "cancel appointment" button click – shows cancel confirmation screen.
+         */
+        function handleCancelClick() {
+            showStep('cancelConfirmStep');
+        }
+
+        /**
+         * Performs the actual cancellation after confirmation.
+         */
+        async function performCancel() {
+            if (!manageToken) return;
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+            document.getElementById('loadingOverlay').querySelector('p').textContent = t('cancel-progress');
+
+            try {
+                const result = await apiGet({ action: 'cancelAppointment', token: manageToken });
+                document.getElementById('loadingOverlay').classList.add('hidden');
+
+                if (result.success) {
+                    manageToken = null;
+                    manageAppointment = null;
+                    showStep('cancelSuccessStep');
+                    applyLanguage(currentLanguage);
+                } else {
+                    alert(result.message || t('error-api'));
+                    showStep('manageStep');
+                }
+            } catch (err) {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                alert(t('error-api'));
+                showStep('manageStep');
+            }
+        }
+
+        // =====================================================================
+        // END APPOINTMENT MANAGEMENT FUNCTIONS
+        // =====================================================================
 
         /**
          * Format date according to current language
