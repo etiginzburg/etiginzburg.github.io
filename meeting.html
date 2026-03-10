@@ -2754,17 +2754,15 @@
             const timeSlotsGrid = document.getElementById('timeSlotsGrid');
             const noSlotsMessage = document.getElementById('noSlotsMessage');
 
-            // Always hide the "no slots" message first - it will be shown again if needed
-            // This fixes a bug where the message remained visible when switching dates
+            // Always clear previous slots and messages first to prevent stale data
+            // from a previously viewed date remaining visible
+            timeSlotsGrid.innerHTML = '';
             noSlotsMessage.classList.add('hidden');
 
             if (timeSlots.length === 0) {
                 noSlotsMessage.classList.remove('hidden');
                 return;
             }
-
-            // Clear previous slots
-            timeSlotsGrid.innerHTML = '';
 
             // Add time slots
             timeSlots.forEach(slot => {
