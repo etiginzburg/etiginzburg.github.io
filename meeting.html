@@ -1726,7 +1726,7 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p data-translate="footer-text">&copy; 2024 מערכת קביעת פגישות - Built by <a href="mailto:moyshiginzburg@gmail.com" class="footer-link">Moyshi</a></p>
+            <p data-translate="footer-text" data-translate-html="true">&copy; 2024 מערכת קביעת פגישות - Built by <a href="mailto:moyshiginzburg@gmail.com" class="footer-link">Moyshi</a></p>
         </footer>
     </div>
 
@@ -2268,7 +2268,11 @@
         }
 
         /**
-         * Apply language translations to the page
+         * Apply language translations to the page.
+         * Purpose: keep all visible UI text synchronized with the selected language.
+         * Method: plain translations are written with textContent, while trusted
+         * HTML translations are rendered only for elements explicitly marked with
+         * data-translate-html="true" so embedded links display correctly.
          */
         function applyLanguage(lang) {
             const html = document.getElementById('htmlRoot');
@@ -2279,7 +2283,11 @@
             document.querySelectorAll('[data-translate]').forEach(element => {
                 const key = element.getAttribute('data-translate');
                 if (translations[lang] && translations[lang][key]) {
-                    element.textContent = translations[lang][key];
+                    if (element.getAttribute('data-translate-html') === 'true') {
+                        element.innerHTML = translations[lang][key];
+                    } else {
+                        element.textContent = translations[lang][key];
+                    }
                 }
             });
 
