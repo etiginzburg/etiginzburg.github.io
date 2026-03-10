@@ -3199,13 +3199,18 @@
             const startStr = `${String(start.getHours()).padStart(2,'0')}:${String(start.getMinutes()).padStart(2,'0')}`;
             const endStr   = `${String(end.getHours()).padStart(2,'0')}:${String(end.getMinutes()).padStart(2,'0')}`;
 
+            // Format: 1 girl = "בת 1" (Hebrew), "1 girl" (English); 2+ = "3 בנות" / "3 girls"
+            const peopleText = lang === 'he'
+                ? (appt.numberOfPeople === 1 ? 'בת 1' : appt.numberOfPeople + ' ' + t('girls'))
+                : appt.numberOfPeople + ' ' + (appt.numberOfPeople === 1 ? t('girl') : t('girls'));
+
             const detailsEl = document.getElementById('manageAppointmentDetails');
             detailsEl.innerHTML = `
                 <div class="confirmation-item"><span class="confirmation-label">${t('confirm-name')}</span><span class="confirmation-value">${appt.clientName}</span></div>
                 <div class="confirmation-item"><span class="confirmation-label">${t('confirm-date')}</span><span class="confirmation-value">${dateStr}</span></div>
                 <div class="confirmation-item"><span class="confirmation-label">${t('confirm-time')}</span><span class="confirmation-value">${startStr} - ${endStr}</span></div>
                 <div class="confirmation-item"><span class="confirmation-label">${t('confirm-duration')}</span><span class="confirmation-value">${formatDurationInLanguage(appt.duration)}</span></div>
-                <div class="confirmation-item"><span class="confirmation-label">${t('confirm-people')}</span><span class="confirmation-value">${appt.numberOfPeople} ${appt.numberOfPeople === 1 ? t('girl') : t('girls')}</span></div>
+                <div class="confirmation-item"><span class="confirmation-label">${t('confirm-people')}</span><span class="confirmation-value">${peopleText}</span></div>
             `;
 
             // Also populate cancel confirm details
@@ -3318,7 +3323,8 @@
 
                 const item = document.createElement('div');
                 item.className = 'appt-list-item';
-                item.innerHTML = `<h4>${dateStr}</h4><p>${timeStr} &bull; ${appt.numberOfPeople} ${appt.numberOfPeople === 1 ? t('girl') : t('girls')}</p>`;
+                const peopleText = (currentLanguage === 'he' ? (appt.numberOfPeople === 1 ? 'בת 1' : appt.numberOfPeople + ' ' + t('girls')) : appt.numberOfPeople + ' ' + (appt.numberOfPeople === 1 ? t('girl') : t('girls')));
+                item.innerHTML = `<h4>${dateStr}</h4><p>${timeStr} &bull; ${peopleText}</p>`;
                 item.addEventListener('click', () => {
                     manageToken = appt.token;
                     manageAppointment = appt;
