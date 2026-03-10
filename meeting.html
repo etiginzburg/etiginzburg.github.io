@@ -849,6 +849,15 @@
             color: #666;
         }
 
+        /* Inline people selector in step2 during reschedule */
+        .reschedule-people-selector {
+            background: #fdf5f9;
+            border: 1px solid #f3d0e3;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+        }
+
         /* Mobile Responsiveness - Tablet and larger phones (768px and below) */
         @media screen and (max-width: 768px) {
 
@@ -1359,7 +1368,7 @@
                     </div>
 
                     <button type="button" class="btn btn-primary" id="continueToDate" disabled>
-                        <span data-translate="continue-date">המשך לבחירת תאריך</span>
+                        <span data-translate="continue-date">המשיכי לבחירת תאריך</span>
                         <i class="fas fa-arrow-left" id="arrowIcon"></i>
                     </button>
                 </form>
@@ -1396,7 +1405,7 @@
                 <div class="step-actions">
                     <button type="button" class="btn btn-secondary" id="backFromOtpRequest">
                         <i class="fas fa-arrow-right"></i>
-                        <span data-translate="back">חזור</span>
+                        <span data-translate="back">חזרי</span>
                     </button>
                     <button type="button" class="btn btn-primary" id="sendOtpBtn">
                         <i class="fas fa-paper-plane"></i>
@@ -1428,7 +1437,7 @@
                 <div class="step-actions">
                     <button type="button" class="btn btn-secondary" id="backFromOtpVerify">
                         <i class="fas fa-arrow-right"></i>
-                        <span data-translate="back">חזור</span>
+                        <span data-translate="back">חזרי</span>
                     </button>
                     <button type="button" class="btn btn-primary" id="verifyOtpBtn">
                         <i class="fas fa-check"></i>
@@ -1489,7 +1498,7 @@
                 <div class="step-actions" style="margin-top:1.5rem;">
                     <button type="button" class="btn btn-secondary" id="backFromApptList">
                         <i class="fas fa-arrow-right"></i>
-                        <span data-translate="back">חזור</span>
+                        <span data-translate="back">חזרי</span>
                     </button>
                 </div>
             </div>
@@ -1507,7 +1516,7 @@
                 <div class="step-actions" style="margin-top:2rem;">
                     <button type="button" class="btn btn-secondary" id="backFromCancelConfirm">
                         <i class="fas fa-arrow-right"></i>
-                        <span data-translate="back">חזור</span>
+                        <span data-translate="back">חזרי</span>
                     </button>
                     <button type="button" class="btn btn-danger" id="confirmCancelBtn">
                         <i class="fas fa-trash-alt"></i>
@@ -1542,6 +1551,28 @@
                     </div>
                 </div>
 
+                <!-- Inline people selector (only visible during reschedule) -->
+                <div class="reschedule-people-selector hidden" id="reschedulePeopleSelector">
+                    <div class="form-group" style="margin-bottom:0.75rem;">
+                        <label for="reschedulePeopleCount" class="form-label" style="font-size:0.9rem;">
+                            <i class="fas fa-users"></i>
+                            <span data-translate="reschedule-people-label">מספר בנות (שני במידת הצורך)</span>
+                        </label>
+                        <select id="reschedulePeopleCount" class="form-select" style="font-size:0.9rem;padding:0.5rem 0.75rem;">
+                            <option value="1" data-translate="people-1">בת 1</option>
+                            <option value="2" data-translate="people-2">2 בנות</option>
+                            <option value="3" data-translate="people-3">3 בנות</option>
+                            <option value="4" data-translate="people-4">4 בנות</option>
+                            <option value="5" data-translate="people-5">5 בנות</option>
+                            <option value="6" data-translate="people-6">6 בנות</option>
+                            <option value="7" data-translate="people-7">7 בנות</option>
+                            <option value="8" data-translate="people-8">8 בנות</option>
+                            <option value="9" data-translate="people-9">9 בנות</option>
+                        </select>
+                        <div class="duration-info show" id="rescheduleDurationInfo" style="margin-top:0.25rem;"></div>
+                    </div>
+                </div>
+
                 <div class="calendar-container">
                     <div class="calendar-header">
                         <button type="button" class="calendar-nav" id="prevMonth">
@@ -1558,10 +1589,10 @@
                 <div class="step-actions">
                     <button type="button" class="btn btn-secondary" id="backToStep1">
                         <i class="fas fa-arrow-right" id="backIcon1"></i>
-                        <span data-translate="back">חזור</span>
+                        <span data-translate="back">חזרי</span>
                     </button>
                     <button type="button" class="btn btn-primary" id="continueToTime" disabled>
-                        <span data-translate="continue-time">המשך לבחירת שעה</span>
+                        <span data-translate="continue-time">המשיכי לבחירת שעה</span>
                         <i class="fas fa-arrow-left" id="arrowIcon2"></i>
                     </button>
                 </div>
@@ -1581,7 +1612,7 @@
                 <div class="time-slots-container">
                     <div class="loading" id="timeSlotsLoading">
                         <i class="fas fa-spinner fa-spin"></i>
-                        <span data-translate="loading-slots">טוען שעות פנויות...</span>
+                        <span data-translate="loading-slots">טוענת שעות פנויות...</span>
                     </div>
                     <div class="time-slots-grid" id="timeSlotsGrid"></div>
                     <div class="no-slots-message hidden" id="noSlotsMessage">
@@ -1594,10 +1625,10 @@
                 <div class="step-actions">
                     <button type="button" class="btn btn-secondary" id="backToStep2">
                         <i class="fas fa-arrow-right" id="backIcon2"></i>
-                        <span data-translate="back">חזור</span>
+                        <span data-translate="back">חזרי</span>
                     </button>
                     <button type="button" class="btn btn-primary" id="continueToConfirm" disabled>
-                        <span data-translate="continue-confirm">המשך לאישור</span>
+                        <span data-translate="continue-confirm">המשיכי לאישור</span>
                         <i class="fas fa-arrow-left" id="arrowIcon3"></i>
                     </button>
                 </div>
@@ -1659,11 +1690,11 @@
                 <div class="step-actions">
                     <button type="button" class="btn btn-secondary" id="backToStep3">
                         <i class="fas fa-arrow-right" id="backIcon3"></i>
-                        <span data-translate="back">חזור</span>
+                        <span data-translate="back">חזרי</span>
                     </button>
                     <button type="button" class="btn btn-success" id="confirmBooking">
                         <i class="fas fa-check"></i>
-                        <span data-translate="confirm-booking">אשר ותקבע פגישה</span>
+                        <span data-translate="confirm-booking">אשרי וקבעי פגישה</span>
                     </button>
                 </div>
             </div>
@@ -1703,7 +1734,7 @@
     <div class="loading-overlay hidden" id="loadingOverlay">
         <div class="loading-spinner">
             <i class="fas fa-spinner fa-spin"></i>
-            <p data-translate="booking-progress">קובע את הפגישה...</p>
+            <p data-translate="booking-progress">קובעת את הפגישה...</p>
         </div>
     </div>
 
@@ -1798,11 +1829,11 @@
                 'people-7': '7 בנות',
                 'people-8': '8 בנות',
                 'people-9': '9 בנות',
-                'continue-date': 'המשך לבחירת תאריך',
-                'continue-time': 'המשך לבחירת שעה',
-                'continue-confirm': 'המשך לאישור',
-                'back': 'חזור',
-                'loading-slots': 'טוען שעות פנויות...',
+                'continue-date': 'המשיכי לבחירת תאריך',
+                'continue-time': 'המשיכי לבחירת שעה',
+                'continue-confirm': 'המשיכי לאישור',
+                'back': 'חזרי',
+                'loading-slots': 'טוענת שעות פנויות...',
                 'no-slots': 'אין שעות פנויות בתאריך זה',
                 'choose-another': 'אנא בחרי תאריך אחר',
                 'confirmation-title': 'סיכום הפגישה',
@@ -1813,13 +1844,13 @@
                 'confirm-date': 'תאריך:',
                 'confirm-time': 'שעה:',
                 'confirm-duration': 'משך הפגישה:',
-                'confirm-booking': 'אשר ותקבע פגישה',
+                'confirm-booking': 'אשרי וקבעי פגישה',
                 'success-title': 'הפגישה נקבעה בהצלחה!',
                 'success-subtitle': 'תקבלי אישור בדוא"ל בקרוב',
                 'add-calendar': 'הוסיפי ליומן שלך',
                 'book-another': 'קבעי פגישה נוספת',
                 'footer-text': '© 2024 מערכת קביעת פגישות - נבנה במיוחד עבורך',
-                'booking-progress': 'קובע את הפגישה...',
+                'booking-progress': 'קובעת את הפגישה...',
                 'duration-text': 'משך הפגישה:',
                 'selected-date': 'תאריך נבחר:',
                 'minutes': 'דקות',
@@ -1866,9 +1897,13 @@
                 'reschedule-success-subtitle': 'תקבלי אישור בדוא"ל בקרוב',
                 'manage-expired': 'לא ניתן לשנות פגישה שכבר התחילה.',
                 'manage-invalid-token': 'הקישור אינו תקין או שפג תוקפו.',
-                'manage-loading': 'טוען פרטי הפגישה...',
-                'reschedule-progress': 'מעדכן את הפגישה...',
-                'cancel-progress': 'מבטל את הפגישה...'
+                'manage-loading': 'טוענת פרטי הפגישה...',
+                'reschedule-progress': 'מעדכנת את הפגישה...',
+                'cancel-progress': 'מבטלת את הפגישה...',
+                'reschedule-people-label': 'מספר בנות (שני במידת הצורך)',
+                'confirm-booking-reschedule': 'אשרי ועדכני את הפגישה',
+                'confirm-old-details-title': 'הפרטים הקודמים (בוטלו)',
+                'reschedule-subject-note': 'עדכון מועד פגישה'
             },
             en: {
                 'page-title': 'Book an Appointment for Fitting',
@@ -1966,7 +2001,11 @@
                 'manage-invalid-token': 'This link is invalid or has expired.',
                 'manage-loading': 'Loading appointment details...',
                 'reschedule-progress': 'Updating your appointment...',
-                'cancel-progress': 'Cancelling your appointment...'
+                'cancel-progress': 'Cancelling your appointment...',
+                'reschedule-people-label': 'Number of girls (change if needed)',
+                'confirm-booking-reschedule': 'Confirm and Update Appointment',
+                'confirm-old-details-title': 'Previous details (cancelled)',
+                'reschedule-subject-note': 'Appointment Rescheduled'
             }
         };
 
@@ -2074,6 +2113,21 @@
                 return;
             }
 
+            // Detect management token BEFORE any async work so we can show loading instantly.
+            // This is purely synchronous – zero impact on new-booking flow.
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlAction = urlParams.get('action');
+            const urlToken = urlParams.get('token');
+            const isManageLink = (urlAction === 'manage' && urlToken);
+
+            if (isManageLink) {
+                // Immediately hide step 1 and show loading overlay (no flash of the booking form)
+                document.getElementById('step1').classList.add('hidden');
+                const loadingP = document.getElementById('loadingOverlay').querySelector('p');
+                loadingP.textContent = t('manage-loading');
+                document.getElementById('loadingOverlay').classList.remove('hidden');
+            }
+
             // Load configuration from server
             try {
                 const response = await apiGet({ action: 'getConfig' });
@@ -2081,7 +2135,6 @@
                     handleConfigLoaded(response.config);
                 } else {
                     console.error('Failed to load config:', response.message);
-                    // Use default config
                     handleConfigLoaded({
                         baseDuration: 30,
                         additionalPersonDuration: 15,
@@ -2090,7 +2143,6 @@
                 }
             } catch (error) {
                 console.error('Error loading config:', error);
-                // Use default config
                 handleConfigLoaded({
                     baseDuration: 30,
                     additionalPersonDuration: 15,
@@ -2104,17 +2156,10 @@
             // Initialize calendar
             initializeCalendar();
 
-            // Check for management token in URL (?action=manage&token=...)
-            const urlParams = new URLSearchParams(window.location.search);
-            const urlAction = urlParams.get('action');
-            const urlToken = urlParams.get('token');
-
-            if (urlAction === 'manage' && urlToken) {
-                // Load appointment by token; language is applied after data is fetched
+            if (isManageLink) {
                 applyLanguage(currentLanguage);
                 await handleTokenManageLink(urlToken);
             } else {
-                // Normal booking flow – apply default language
                 applyLanguage(currentLanguage);
             }
 
@@ -2191,6 +2236,9 @@
             // Cancel confirm
             document.getElementById('backFromCancelConfirm').addEventListener('click', () => showStep('manageStep'));
             document.getElementById('confirmCancelBtn').addEventListener('click', performCancel);
+
+            // Reschedule inline people selector
+            document.getElementById('reschedulePeopleCount').addEventListener('change', handleReschedulePeopleChange);
 
             // Cancel success
             document.getElementById('bookAfterCancel').addEventListener('click', resetForm);
@@ -2788,6 +2836,22 @@
             document.getElementById('confirmTime').textContent = `${selectedTimeSlot.start} - ${selectedTimeSlot.end}`;
             document.getElementById('confirmDuration').textContent = durationText;
 
+            // Show/hide phone and email rows depending on whether they exist
+            // (During reschedule, these come from the token – always available;
+            //  but if somehow empty, hide the row rather than showing an empty line)
+            const phoneRow = document.getElementById('confirmPhone').closest('.confirmation-item');
+            const emailRow = document.getElementById('confirmEmail').closest('.confirmation-item');
+            if (phoneRow) phoneRow.style.display = phone ? '' : 'none';
+            if (emailRow) emailRow.style.display = email ? '' : 'none';
+
+            // Update confirm button text for reschedule mode
+            const confirmBtn = document.getElementById('confirmBooking');
+            if (isRescheduling) {
+                confirmBtn.querySelector('span').textContent = t('confirm-booking-reschedule');
+            } else {
+                confirmBtn.querySelector('span').textContent = t('confirm-booking');
+            }
+
             // Store appointment data with language preference
             const year = selectedDate.getFullYear();
             const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
@@ -2819,12 +2883,17 @@
                     // Reschedule mode: call rescheduleAppointment instead of bookAppointment
                     loadingP.textContent = t('reschedule-progress');
                     // Pass newSlot as raw JSON string; apiGet (URLSearchParams) will encode it
-                    const response = await apiGet({
+                    const rescheduleParams = {
                         action: 'rescheduleAppointment',
                         token: manageToken,
                         newDate: appointmentData.date,
                         newSlot: JSON.stringify(appointmentData.selectedSlot)
-                    });
+                    };
+                    // Include people count so the backend can recalculate duration
+                    if (appointmentData.numberOfPeople) {
+                        rescheduleParams.newPeople = String(appointmentData.numberOfPeople);
+                    }
+                    const response = await apiGet(rescheduleParams);
                     handleRescheduleSuccess(response);
                 } else {
                     // Normal booking
@@ -3040,6 +3109,9 @@
 
             // Scroll to top
             window.scrollTo(0, 0);
+
+            // Hide reschedule-specific UI
+            document.getElementById('reschedulePeopleSelector').classList.add('hidden');
 
             // Clean up URL params (remove ?action=manage&token=... from address bar)
             if (window.history && window.history.replaceState) {
@@ -3274,9 +3346,55 @@
             document.getElementById('continueToDate').disabled = false;
             // Switch to reschedule mode
             isRescheduling = true;
+            // Sync currentStep so goToStep(3) can hide step2 correctly
+            currentStep = 2;
+            // Show the inline people selector for reschedule
+            showReschedulePeopleSelector();
             // Go to step 2 (date/time selection)
             showStep('step2');
             renderCalendar();
+        }
+
+        /**
+         * Shows the inline people selector in step 2 during reschedule,
+         * pre-selecting the current number of people.
+         */
+        function showReschedulePeopleSelector() {
+            const selector = document.getElementById('reschedulePeopleSelector');
+            const select = document.getElementById('reschedulePeopleCount');
+            select.value = String(manageAppointment.numberOfPeople);
+            selector.classList.remove('hidden');
+            // Show the duration for the current selection
+            updateRescheduleDurationInfo();
+        }
+
+        /**
+         * Handles a change in the inline people selector during reschedule.
+         * Updates the hidden step-1 select and recomputes duration / refreshes time slots cache.
+         */
+        function handleReschedulePeopleChange() {
+            const newPeople = parseInt(document.getElementById('reschedulePeopleCount').value);
+            document.getElementById('numberOfPeople').value = String(newPeople);
+            handlePeopleChange(); // recalculates duration, clears cache, etc.
+            updateRescheduleDurationInfo();
+            // If a date is already selected, reload slots for the new duration
+            if (selectedDate) {
+                clearAllCache();
+                startPreloading();
+            }
+        }
+
+        /**
+         * Updates the duration info text inside the reschedule people selector.
+         */
+        function updateRescheduleDurationInfo() {
+            const people = parseInt(document.getElementById('reschedulePeopleCount').value);
+            const baseDuration = config.baseDuration || 30;
+            const additionalDuration = config.additionalPersonDuration || 15;
+            const totalDuration = baseDuration + ((people - 1) * additionalDuration);
+            const durationText = formatDurationInLanguage(totalDuration);
+            const label = t('duration-text');
+            document.getElementById('rescheduleDurationInfo').textContent = `${label} ${durationText}`;
         }
 
         /**
