@@ -1784,7 +1784,8 @@
         let currentMonth = new Date();
         let config = {};
         let calendarLink = null;
-        let currentLanguage = 'he'; // Default to Hebrew
+        const _browserLang = (navigator.language || 'he').toLowerCase();
+        let currentLanguage = _browserLang.startsWith('en') ? 'en' : 'he';
 
         // Management flow state
         let manageToken = null;          // Active management token (from URL or OTP flow)
