@@ -3595,7 +3595,23 @@
 
             const { businessHours, busySlots } = availability;
             const timeSlots = [];
-            const interval = config.timeSlotInterval || 15; // 15 minutes default
+            const interval = config.timeSlotInterval || 15;
+            
+            // Get date string (YYYY-MM-DD)
+            const dateStr = date.toISOString().split('T')[0];
+
+            // Determine if date is in Israel DST (simplified for 2024-2030)
+            // Israel DST starts last Friday before March 30, ends last Sunday of October
+            const isIsraelDST = (d) => {
+                const year = d.getFullYear();
+                // DST approximate: end of March to end of October
+                const dstStart = new Date(year, 2, 21);
+                while (dstStart.getDay() !== 5) dstStart.setDate(dstStart.getDate() + 1);
+                const dstEnd = new Date(year, 9, 25);
+                while (dstEnd.getDay() !== 0) dstEnd.setDate(dstEnd.getDate() + 1);
+                return d >= dstStart && d < dstEnd;
+            };
+            const tzOffset = isIsraelDST(date) ? '+03:00' : '+02:00';
 
             const periods = [];
             periods.push({ start: businessHours.start, end: businessHours.end });
@@ -3604,7 +3620,15 @@
             }
 
             const now = new Date();
-            const isToday = date.toDateString() === now.toDateString();
+            // Check if it's today in Israel time (approx)
+            const todayStr = new Intl.DateTimeFormat('en-CA', {timeZone: 'Asia/Jerusalem'}).format(now);
+            const isToday = (dateStr === todayStr);
+
+            // 1. Check if there's an all-day "אין לקוחות" blocking this day
+            const isDayBlocked = busySlots.some(busy => 
+                busy.isAllDay && busy.title === 'אין לקוחות' && busy.start.startsWith(dateStr)
+            );
+            if (isDayBlocked) return [];
 
             periods.forEach(period => {
                 if (!period.start || !period.end) return;
@@ -3613,41 +3637,48 @@
                 const endMinutes = timeToMinutes(period.end);
 
                 for (let current = startMinutes; current + duration <= endMinutes; current += interval) {
-                    const slotStartMinutes = current;
-                    const slotEndMinutes = current + duration;
+                    const slotStartMins = current;
+                    const slotEndMins = current + duration;
+
+                    // Create absolute Date objects in Israel time
+                    const format = (mins) => {
+                        const h = Math.floor(mins / 60).toString().padStart(2, '0');
+                        const m = (mins % 60).toString().padStart(2, '0');
+                        return `${h}:${m}`;
+                    };
+
+                    const slotStartTime = new Date(`${dateStr}T${format(slotStartMins)}:00${tzOffset}`);
+                    const slotEndTime = new Date(`${dateStr}T${format(slotEndMins)}:00${tzOffset}`);
 
                     // Check past/buffer for today
                     if (isToday) {
-                        const slotStartTime = new Date(date);
-                        slotStartTime.setHours(Math.floor(slotStartMinutes / 60), slotStartMinutes % 60, 0, 0);
                         const threeHoursFromNow = new Date(now.getTime() + (3 * 60 * 60 * 1000));
-
                         if (slotStartTime <= threeHoursFromNow) {
                             continue;
                         }
                     }
 
-                    // Overlap check
+                    // Overlap check with busy slots (including buffers already applied on server)
                     const isBlocked = busySlots.some(busy => {
                         const busyStart = new Date(busy.start);
                         const busyEnd = new Date(busy.end);
-
-                        // To compare accurately, we should compare full Date objects
-                        const slotStartTime = new Date(date);
-                        slotStartTime.setHours(Math.floor(slotStartMinutes / 60), slotStartMinutes % 60, 0, 0);
-
-                        const slotEndTime = new Date(date);
-                        slotEndTime.setHours(Math.floor(slotEndMinutes / 60), slotEndMinutes % 60, 0, 0);
-
+                        // Simple overlap check
                         return (slotStartTime < busyEnd) && (slotEndTime > busyStart);
                     });
 
                     if (!isBlocked) {
-                        const startH = Math.floor(slotStartMinutes / 60);
-                        const startM = slotStartMinutes % 60;
-                        const endH = Math.floor(slotEndMinutes / 60);
-                        const endM = slotEndMinutes % 60;
+                        timeSlots.push({
+                            start: format(slotStartMins),
+                            end: format(slotEndMins),
+                            startDateTime: slotStartTime.toISOString(),
+                            endDateTime: slotEndTime.toISOString()
+                        });
+                    }
+                }
+            });
 
+            return timeSlots;
+        }
                         const format = (h, m) => `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
 
                         const slotStartTime = new Date(date);
