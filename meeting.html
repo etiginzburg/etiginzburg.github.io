@@ -3679,28 +3679,7 @@
 
             return timeSlots;
         }
-                        const format = (h, m) => `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-
-                        const slotStartTime = new Date(date);
-                        slotStartTime.setHours(startH, startM, 0, 0);
-                        const slotEndTime = new Date(date);
-                        slotEndTime.setHours(endH, endM, 0, 0);
-
-                        timeSlots.push({
-                            start: format(startH, startM),
-                            end: format(endH, endM),
-                            startDateTime: slotStartTime.toISOString(),
-                            endDateTime: slotEndTime.toISOString()
-                        });
-                    }
-                }
-            });
-
-            return timeSlots;
         }
-
-        // Map the clean function to the real name
-        calculateAvailableSlots = calculateAvailableSlotsClean;
 
         // ============================================================================
         // PRE-LOADING FUNCTIONS
