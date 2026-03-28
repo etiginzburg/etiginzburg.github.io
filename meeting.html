@@ -101,7 +101,7 @@
         .step-container {
             max-width: 600px;
             margin: 0 auto;
-            animation: fadeIn 0.5s ease-in-out;
+            animation: fadeIn 0.2s ease-in-out;
         }
 
         .step-container.hidden {
@@ -175,7 +175,7 @@
             font-weight: 500;
             color: #495057;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.1s ease;
             font-family: inherit;
         }
 
@@ -257,7 +257,7 @@
             border-radius: 8px;
             font-size: 1rem;
             font-family: inherit;
-            transition: all 0.3s ease;
+            transition: all 0.1s ease;
             background: white;
         }
 
@@ -321,13 +321,17 @@
             font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.1s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
             text-decoration: none;
             font-family: inherit;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
         }
 
         .btn:disabled {
@@ -408,7 +412,7 @@
             cursor: pointer;
             padding: 0.5rem;
             border-radius: 50%;
-            transition: all 0.3s ease;
+            transition: all 0.1s ease;
         }
 
         .calendar-nav:hover {
@@ -431,7 +435,7 @@
             justify-content: center;
             background: white;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.1s ease;
             font-weight: 500;
             position: relative;
         }
@@ -500,9 +504,13 @@
             border-radius: 8px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.1s ease;
             background: white;
             font-weight: 500;
+        }
+
+        .time-slot:active {
+            transform: scale(0.97);
         }
 
         .time-slot:hover {
@@ -1773,9 +1781,49 @@
          * - Execute as: Me (your email)
          * - Who has access: Anyone
          */
-        const API_URL = 'https://script.google.com/macros/s/AKfycby-Sz_7MoVGlmi67f7EKBTrl-P5xtnWa3D4zWMxXerBt8vcmQR5sYwmvTOTSutEvLR2/exec';
+        const API_URL = '/api';
+
+        const DEFAULT_CONFIG = {
+            baseDuration: 30,
+            additionalPersonDuration: 15,
+            timeSlotInterval: 15,
+            businessName: 'אתי גינזבורג שמלות ערב',
+            businessHours: {
+                 0: { start: '09:00', end: '15:15', evening: { start: '18:30', end: '20:30' } },
+                 1: { start: '09:00', end: '15:15', evening: { start: '18:30', end: '20:30' } },
+                 2: { start: '09:00', end: '15:15', evening: { start: '18:30', end: '20:30' } },
+                 3: { start: '09:00', end: '15:15', evening: { start: '18:30', end: '20:30' } },
+                 4: { start: '09:00', end: '15:00' },
+                 5: null,
+                 6: null
+            }
+        };
         // ============================================================================
 
+        const CACHE_TTL = 3600000;
+        function saveCache() {
+            try {
+                const withTimestamp = {};
+                Object.entries(availabilityCache).forEach(([k, v]) => {
+                    withTimestamp[k] = { ...v, _savedAt: Date.now() };
+                });
+                sessionStorage.setItem('availabilityCache', JSON.stringify(withTimestamp));
+            } catch (e) {}
+        }
+        function loadCache() {
+            try {
+                const saved = sessionStorage.getItem('availabilityCache');
+                if (!saved) return;
+                const parsed = JSON.parse(saved);
+                Object.entries(parsed).forEach(([k, v]) => {
+                    if (Date.now() - v._savedAt < CACHE_TTL) {
+                        delete v._savedAt;
+                        availabilityCache[k] = v;
+                    }
+                });
+            } catch (e) {}
+        }
+        
         // Global variables
         let currentStep = 1;
         let selectedDate = null;
@@ -2038,55 +2086,68 @@
          * @return {Promise<Object>} The JSON response
          */
         async function apiGet(params) {
-            const queryString = new URLSearchParams(params).toString();
-            const url = `${API_URL}?${queryString}`;
+            let endpoint = API_URL + '/';
+            let fetchOptions = {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' }
+            };
+
+            const action = params.action;
+            const paramsCopy = {...params};
+            delete paramsCopy.action; 
+
+            if (action === 'getConfig') {
+                endpoint += 'config';
+            } else if (action === 'getAvailableTimeSlots') {
+                endpoint += 'availability?date=' + paramsCopy.date;
+            } else if (action === 'getAppointmentByToken') {
+                endpoint += 'appointment?token=' + paramsCopy.token;
+            } else if (action === 'sendOTP') {
+                endpoint += 'send-otp';
+                fetchOptions.method = 'POST';
+                fetchOptions.headers['Content-Type'] = 'application/json';
+                fetchOptions.body = JSON.stringify(paramsCopy);
+            } else if (action === 'verifyOTPAndGetAppointments') {
+                endpoint += 'verify-otp';
+                fetchOptions.method = 'POST';
+                fetchOptions.headers['Content-Type'] = 'application/json';
+                fetchOptions.body = JSON.stringify(paramsCopy);
+            } else if (action === 'cancelAppointment') {
+                endpoint += 'cancel';
+                fetchOptions.method = 'POST';
+                fetchOptions.headers['Content-Type'] = 'application/json';
+                fetchOptions.body = JSON.stringify(paramsCopy);
+            }
 
             try {
-                const response = await fetch(url, {
-                    method: 'GET',
-                    mode: 'cors',
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
+                const response = await fetch(endpoint, fetchOptions);
+                if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
                 return await response.json();
             } catch (error) {
-                console.error('API GET error:', error);
+                console.error('API error:', error);
                 throw error;
             }
         }
 
-        /**
-         * Makes a POST request to the Google Apps Script API
-         * Uses a workaround for GAS CORS issues by encoding data in URL
-         * 
-         * @param {Object} data - Data to send
-         * @return {Promise<Object>} The JSON response
-         */
         async function apiPost(data) {
+            let endpoint = API_URL + '/';
+            const action = data.action;
+            const dataCopy = {...data};
+            delete dataCopy.action;
+
+            if (action === 'bookAppointment') endpoint += 'book';
+            else if (action === 'rescheduleAppointment') endpoint += 'reschedule';
+
             try {
-                // For Google Apps Script, we need to use GET with encoded data
-                // because POST has CORS issues with external domains
-                const encodedData = encodeURIComponent(JSON.stringify(data));
-                const url = `${API_URL}?action=${data.action}&data=${encodedData}`;
-
-                const response = await fetch(url, {
-                    method: 'GET',
-                    mode: 'cors',
+                const response = await fetch(endpoint, {
+                    method: 'POST',
                     headers: {
+                        'Content-Type': 'application/json',
                         'Accept': 'application/json'
-                    }
+                    },
+                    body: JSON.stringify(dataCopy)
                 });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
+                if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
                 return await response.json();
             } catch (error) {
                 console.error('API POST error:', error);
@@ -2129,27 +2190,17 @@
                 document.getElementById('loadingOverlay').classList.remove('hidden');
             }
 
-            // Load configuration from server
-            try {
-                const response = await apiGet({ action: 'getConfig' });
-                if (response.success) {
-                    handleConfigLoaded(response.config);
-                } else {
-                    console.error('Failed to load config:', response.message);
-                    handleConfigLoaded({
-                        baseDuration: 30,
-                        additionalPersonDuration: 15,
-                        businessName: 'אתי גינזבורג שמלות ערב'
-                    });
+            // Instant loading with fallback
+            config = DEFAULT_CONFIG;
+            handleConfigLoaded(config);
+            loadCache();
+
+            // Background update
+            apiGet({ action: 'getConfig' }).then(response => {
+                if (response && response.success && response.config) {
+                    config = Object.assign(config, response.config);
                 }
-            } catch (error) {
-                console.error('Error loading config:', error);
-                handleConfigLoaded({
-                    baseDuration: 30,
-                    additionalPersonDuration: 15,
-                    businessName: 'אתי גינזבורג שמלות ערב'
-                });
-            }
+            }).catch(e => console.error('Config fetch error', e));
 
             // Set up event listeners
             setupEventListeners();
@@ -2963,6 +3014,19 @@
          * Handle successful booking
          * Also handles the case where the slot was taken between selection and confirmation
          */
+                function buildCalendarLink(appointmentDetails) {
+            const slot = appointmentData.selectedSlot;
+            const startStr = slot.startDateTime.replace(/[-:]/g, '').replace('.000Z', 'Z');
+            const endStr = slot.endDateTime.replace(/[-:]/g, '').replace('.000Z', 'Z');
+            const params = new URLSearchParams({
+                action: 'TEMPLATE',
+                text: (currentLanguage === 'he' ? 'מדידת שמלות - ' : 'Dress Fitting - ') + config.businessName,
+                dates: startStr + '/' + endStr,
+                location: currentLanguage === 'en' ? 'Rav Amram 18, 2nd Floor, Beit Shemesh' : 'רב עמרם 18, קומה 2, בית שמש',
+                ctz: 'Asia/Jerusalem'
+            });
+            return 'https://calendar.google.com/calendar/render?' + params.toString();
+        }
         function handleBookingSuccess(result) {
             // Hide loading overlay
             document.getElementById('loadingOverlay').classList.add('hidden');
