@@ -2098,7 +2098,7 @@
 
             if (action === 'getConfig') {
                 endpoint += 'config';
-            } else if (action === 'getAvailableTimeSlots') {
+            } else if (action === 'getAvailableTimeSlots' || action === 'getDailyAvailability') {
                 endpoint += 'availability?date=' + paramsCopy.date;
             } else if (action === 'getAppointmentByToken') {
                 endpoint += 'appointment?token=' + paramsCopy.token;
@@ -3576,87 +3576,7 @@
          * @return {Array} Array of time slots { start, end, startDateTime, endDateTime }
          */
         function calculateAvailableSlots(availability, duration, date) {
-            if (!availability || !availability.businessHours) {
-                return [];
-            }
-
-            const { businessHours, busySlots } = availability;
-            const timeSlots = [];
-            const interval = config.timeSlotInterval || 15;
-
-            // Helper to process a period (morning, evening)
-            const processPeriod = (startStr, endStr) => {
-                if (!startStr || !endStr) return;
-
-                const startMinutes = timeToMinutes(startStr);
-                const endMinutes = timeToMinutes(endStr);
-
-                // Use a loop to check every slot
-                for (let current = startMinutes; current + duration <= endMinutes; current += interval) {
-                    const slotStartMinutes = current;
-                    const slotEndMinutes = current + duration;
-
-                    // Check if this slot overlaps with any busy slot
-                    const isBlocked = busySlots.some(busy => {
-                        const busyStart = new Date(busy.start);
-                        const busyEnd = new Date(busy.end);
-
-                        // Convert busy times to minutes since midnight for today
-                        // Note: busySlots from server are full ISO strings
-                        const busyStartMinutes = (busyStart.getHours() * 60) + busyStart.getMinutes();
-                        const busyEndMinutes = (busyEnd.getHours() * 60) + busyEnd.getMinutes();
-
-                        // Simple overlap check: (StartA < EndB) && (EndA > StartB)
-                        return (slotStartMinutes < busyEndMinutes) && (slotEndMinutes > busyStartMinutes);
-                    });
-
-                    // Specific check for "today" - filter out past slots + 3 hours buffer
-                    const now = new Date();
-                    const isToday = date.toDateString() === now.toDateString();
-                    if (isToday) {
-                        const slotStartTime = new Date(date);
-                        slotStartTime.setHours(Math.floor(slotStartMinutes / 60), slotStartMinutes % 60, 0, 0);
-
-                        const threeHoursFromNow = new Date(now.getTime() + (3 * 60 * 60 * 1000));
-                        if (slotStartTime <= threeHoursFromNow) {
-                            return;
-                        }
-                    }
-
-                    if (!isBlocked) {
-                        // Formatting
-                        const startH = Math.floor(slotStartMinutes / 60);
-                        const startM = slotStartMinutes % 60;
-                        const endH = Math.floor(slotEndMinutes / 60);
-                        const endM = slotEndMinutes % 60;
-
-                        const format = (h, m) => `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-
-                        // Create Date objects for ISO strings
-                        const slotStartDate = new Date(date);
-                        slotStartDate.setHours(startH, startM, 0, 0);
-                        const slotEndDate = new Date(date);
-                        slotEndDate.setHours(endH, endM, 0, 0);
-
-                        timeSlots.push({
-                            start: format(startH, startM),
-                            end: format(endH, endM),
-                            startDateTime: slotStartDate.toISOString(),
-                            endDateTime: slotEndDate.toISOString()
-                        });
-                    }
-                }
-            };
-
-            // Process morning
-            processPeriod(businessHours.start, businessHours.end);
-
-            // Process evening if exists
-            if (businessHours.evening) {
-                processPeriod(businessHours.evening.start, businessHours.evening.end);
-            }
-
-            return timeSlots;
+            return calculateAvailableSlotsClean(availability, duration, date);
         }
 
         /**
