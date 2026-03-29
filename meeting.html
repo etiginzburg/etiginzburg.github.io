@@ -3669,10 +3669,14 @@
             };
             const tzOffset = isIsraelDST(date) ? '+03:00' : '+02:00';
 
-            const periods = [];
-            periods.push({ start: businessHours.start, end: businessHours.end });
-            if (businessHours.evening) {
-                periods.push({ start: businessHours.evening.start, end: businessHours.evening.end });
+            let periods = [];
+            if (Array.isArray(businessHours)) {
+                periods = businessHours;
+            } else if (businessHours && businessHours.start && businessHours.end) {
+                periods.push({ start: businessHours.start, end: businessHours.end });
+                if (businessHours.evening) {
+                    periods.push({ start: businessHours.evening.start, end: businessHours.evening.end });
+                }
             }
 
             const now = new Date();
