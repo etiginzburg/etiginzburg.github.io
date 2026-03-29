@@ -1832,6 +1832,7 @@
         let currentMonth = new Date();
         let config = {};
         let calendarLink = null;
+        let lastManagementToken = null; // Store token for ICS generation
         const _browserLang = (navigator.language || 'he').toLowerCase();
         let currentLanguage = _browserLang.startsWith('en') ? 'en' : 'he';
 
@@ -3065,7 +3066,10 @@
             }
 
             if (result && result.success === true) {
-                // Store calendar link
+                // Store token for ICS generation
+                lastManagementToken = result.token;
+                
+                // Build exact same content as the ICS file for the Add to Calendar link
 
                 // Build exact same content as the ICS file for the Add to Calendar link
                 const eventTitle = currentLanguage === 'he' ? 'מדידת שמלות - אתי גינזבורג' : 'Dress Fitting - Eti Ginzburg';
@@ -3148,14 +3152,63 @@
          * Add appointment to client's calendar
          */
         function addToCalendar() {
-            if (calendarLink) {
-                window.open(calendarLink, '_blank');
-            } else {
-                const errorMsg = currentLanguage === 'he'
-                    ? 'שגיאה ביצירת קישור ליומן'
-                    : 'Error creating calendar link';
-                alert(errorMsg);
+            if (!appointmentData || !appointmentData.selectedSlot) {
+                return;
             }
+
+            const formatIcsDate = (isoStr) => {
+                return isoStr.replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+            };
+
+            const start = formatIcsDate(appointmentData.selectedSlot.startDateTime);
+            const end = formatIcsDate(appointmentData.selectedSlot.endDateTime);
+            
+            const title = currentLanguage === 'he' ? 'מדידת שמלות - אתי גינזבורג' : 'Dress Fitting - Eti Ginzburg';
+            const location = currentLanguage === 'he' ? 'אתי גינזבורג, רב עמרם 18, קומה 2, בית שמש' : 'Eti Ginzburg, Rav Amram 18, 2nd Floor, Beit Shemesh';
+            
+            const manageUrl = `${window.location.origin}?action=manage&token=${lastManagementToken}`;
+            const manageSuffix = currentLanguage === 'he' 
+                ? `\n\nלשינוי מועד או ביטול הפגישה:\n${manageUrl}`
+                : `\n\nTo reschedule or cancel:\n${manageUrl}`;
+            
+            const girlsText = currentLanguage === 'he' 
+                ? (appointmentData.numberOfPeople === 1 ? 'בת 1' : appointmentData.numberOfPeople + ' בנות')
+                : (appointmentData.numberOfPeople === 1 ? '1 girl' : appointmentData.numberOfPeople + ' girls');
+                
+            const desc = currentLanguage === 'he'
+                ? `מדידת שמלות עבור ${girlsText}\n\n📍 כתובת: רב עמרם 18, קומה 2, בית שמש\n\n🗺️ לניווט ב-Waze:\nhttps://waze.com/ul/hsv8u7eths\n\n📞 טלפון: 050-4164002${manageSuffix}`
+                : `Dress fitting for ${girlsText}\n\n📍 Address: Rav Amram 18, 2nd Floor, Beit Shemesh\n\n🗺️ Navigation with Waze:\nhttps://waze.com/ul/hsv8u7eths\n\n📞 Phone: 050-4164002${manageSuffix}`;
+
+            // Build ICS file content
+            const icsContent = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//Eti Ginzburg//Appointment Booking System//HE',
+                'CALSCALE:GREGORIAN',
+                'METHOD:PUBLISH',
+                'BEGIN:VEVENT',
+                `UID:${Date.now()}@etiginzburg.com`,
+                `DTSTAMP:${formatIcsDate(new Date().toISOString())}`,
+                `DTSTART:${start}`,
+                `DTEND:${end}`,
+                `SUMMARY:${title}`,
+                `LOCATION:${location}`,
+                `DESCRIPTION:${desc.replace(/\n/g, '\\n')}`,
+                'STATUS:CONFIRMED',
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\r\n');
+
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'invite.ics';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
         }
 
         /**
