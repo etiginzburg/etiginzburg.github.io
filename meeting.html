@@ -3712,8 +3712,10 @@
 
                     // Check past/buffer for today
                     if (isToday) {
-                        const threeHoursFromNow = new Date(now.getTime() + (3 * 60 * 60 * 1000));
-                        if (slotStartTime <= threeHoursFromNow) {
+                        const minLeadHours = config.minLeadTime !== undefined ? config.minLeadTime : 3;
+                        const leadTimeMs = minLeadHours * 60 * 60 * 1000;
+                        const cutoffTime = new Date(now.getTime() + leadTimeMs);
+                        if (slotStartTime <= cutoffTime) {
                             continue;
                         }
                     }
