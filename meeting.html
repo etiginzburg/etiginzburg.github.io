@@ -3156,15 +3156,21 @@
                 return;
             }
 
-            const formatIcsDate = (isoStr) => {
-                return isoStr.replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+            const formatForGoogle = (dateIso) => {
+                const dateObj = new Date(dateIso);
+                const y = dateObj.getFullYear();
+                const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const d = String(dateObj.getDate()).padStart(2, '0');
+                const h = String(dateObj.getHours()).padStart(2, '0');
+                const min = String(dateObj.getMinutes()).padStart(2, '0');
+                return `${y}${m}${d}T${h}${min}00`;
             };
 
-            const start = formatIcsDate(appointmentData.selectedSlot.startDateTime);
-            const end = formatIcsDate(appointmentData.selectedSlot.endDateTime);
+            const startFormatted = formatForGoogle(appointmentData.selectedSlot.startDateTime);
+            const endFormatted = formatForGoogle(appointmentData.selectedSlot.endDateTime);
             
-            const title = currentLanguage === 'he' ? 'מדידת שמלות - אתי גינזבורג' : 'Dress Fitting - Eti Ginzburg';
-            const location = currentLanguage === 'he' ? 'אתי גינזבורג, רב עמרם 18, קומה 2, בית שמש' : 'Eti Ginzburg, Rav Amram 18, 2nd Floor, Beit Shemesh';
+            const eventTitle = currentLanguage === 'he' ? 'מדידת שמלות - אתי גינזבורג' : 'Dress Fitting - Eti Ginzburg';
+            const eventLocation = currentLanguage === 'he' ? 'אתי גינזבורג, רב עמרם 18, קומה 2, בית שמש' : 'Eti Ginzburg, Rav Amram 18, 2nd Floor, Beit Shemesh';
             
             const manageUrl = `${window.location.origin}?action=manage&token=${lastManagementToken}`;
             const manageSuffix = currentLanguage === 'he' 
@@ -3175,40 +3181,13 @@
                 ? (appointmentData.numberOfPeople === 1 ? 'בת 1' : appointmentData.numberOfPeople + ' בנות')
                 : (appointmentData.numberOfPeople === 1 ? '1 girl' : appointmentData.numberOfPeople + ' girls');
                 
-            const desc = currentLanguage === 'he'
+            const eventDesc = currentLanguage === 'he'
                 ? `מדידת שמלות עבור ${girlsText}\n\n📍 כתובת: רב עמרם 18, קומה 2, בית שמש\n\n🗺️ לניווט ב-Waze:\nhttps://waze.com/ul/hsv8u7eths\n\n📞 טלפון: 050-4164002${manageSuffix}`
                 : `Dress fitting for ${girlsText}\n\n📍 Address: Rav Amram 18, 2nd Floor, Beit Shemesh\n\n🗺️ Navigation with Waze:\nhttps://waze.com/ul/hsv8u7eths\n\n📞 Phone: 050-4164002${manageSuffix}`;
 
-            // Build ICS file content
-            const icsContent = [
-                'BEGIN:VCALENDAR',
-                'VERSION:2.0',
-                'PRODID:-//Eti Ginzburg//Appointment Booking System//HE',
-                'CALSCALE:GREGORIAN',
-                'METHOD:PUBLISH',
-                'BEGIN:VEVENT',
-                `UID:${Date.now()}@etiginzburg.com`,
-                `DTSTAMP:${formatIcsDate(new Date().toISOString())}`,
-                `DTSTART:${start}`,
-                `DTEND:${end}`,
-                `SUMMARY:${title}`,
-                `LOCATION:${location}`,
-                `DESCRIPTION:${desc.replace(/\n/g, '\\n')}`,
-                'STATUS:CONFIRMED',
-                'END:VEVENT',
-                'END:VCALENDAR'
-            ].join('\r\n');
-
-            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
+            const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventTitle)}&dates=${startFormatted}/${endFormatted}&details=${encodeURIComponent(eventDesc)}&location=${encodeURIComponent(eventLocation)}&ctz=Asia/Jerusalem`;
             
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'invite.ics';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
+            window.open(calendarUrl, '_blank');
         }
 
         /**
