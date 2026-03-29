@@ -2922,9 +2922,11 @@
                 email: email,
                 numberOfPeople: people,
                 selectedSlot: selectedTimeSlot,
+                duration: duration,
                 date: dateStr,
                 language: currentLanguage
             };
+
         }
 
         /**
@@ -2957,9 +2959,10 @@
                     // Normal booking
                     const response = await apiPost({
                         action: 'bookAppointment',
-                        appointmentData: appointmentData
+                        ...appointmentData
                     });
                     handleBookingSuccess(response);
+
                 }
             } catch (error) {
                 handleBookingError(error);
