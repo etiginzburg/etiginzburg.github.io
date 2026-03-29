@@ -3067,7 +3067,7 @@
             if (result && result.success === true) {
                 // Store calendar link
 
-                calendarLink = result.calendarLink;
+                calendarLink = result.calendarLink || `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t('meeting'))}&dates=${appointmentData.selectedSlot.startDateTime.replace(/[-:]/g,'').replace(/\.\d{3}/,'')}/${appointmentData.selectedSlot.endDateTime.replace(/[-:]/g,'').replace(/\.\d{3}/,'')}&details=${encodeURIComponent('https://etiginzburg-meeting.pages.dev')}`;
 
                 // Show success step
                 goToStep('success');
@@ -3093,7 +3093,7 @@
             </div>
             <div class="confirmation-item">
                 <span class="confirmation-label">${t('confirm-duration')}</span>
-                <span class="confirmation-value">${formatDurationInLanguage(result.duration)}</span>
+                <span class="confirmation-value">${formatDurationInLanguage(appointmentData.duration)}</span>
             </div>
             <div class="confirmation-item">
                 <span class="confirmation-label">${t('confirm-address')}</span>
