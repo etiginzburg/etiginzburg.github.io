@@ -3067,7 +3067,24 @@
             if (result && result.success === true) {
                 // Store calendar link
 
-                calendarLink = result.calendarLink || `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t('meeting'))}&dates=${appointmentData.selectedSlot.startDateTime.replace(/[-:]/g,'').replace(/\.\d{3}/,'')}/${appointmentData.selectedSlot.endDateTime.replace(/[-:]/g,'').replace(/\.\d{3}/,'')}&details=${encodeURIComponent('https://etiginzburg-meeting.pages.dev')}`;
+                // Build exact same content as the ICS file for the Add to Calendar link
+                const eventTitle = currentLanguage === 'he' ? 'מדידת שמלות - אתי גינזבורג' : 'Dress Fitting - Eti Ginzburg';
+                const eventLocation = currentLanguage === 'he' ? 'אתי גינזבורג, רב עמרם 18, קומה 2, בית שמש' : 'Eti Ginzburg, Rav Amram 18, 2nd Floor, Beit Shemesh';
+                
+                const manageUrl = `${window.location.origin}?action=manage&token=${result.token}`;
+                const manageSuffix = currentLanguage === 'he' 
+                    ? `\n\nלשינוי מועד או ביטול הפגישה:\n${manageUrl}`
+                    : `\n\nTo reschedule or cancel:\n${manageUrl}`;
+                
+                const girlsText = currentLanguage === 'he' 
+                    ? (appointmentData.numberOfPeople === 1 ? 'בת 1' : appointmentData.numberOfPeople + ' בנות')
+                    : (appointmentData.numberOfPeople === 1 ? '1 girl' : appointmentData.numberOfPeople + ' girls');
+                    
+                const eventDesc = currentLanguage === 'he'
+                    ? `מדידת שמלות עבור ${girlsText}\n\n📍 כתובת: רב עמרם 18, קומה 2, בית שמש\n\n🗺️ לניווט ב-Waze:\nhttps://waze.com/ul/hsv8u7eths\n\n📞 טלפון: 050-4164002${manageSuffix}`
+                    : `Dress fitting for ${girlsText}\n\n📍 Address: Rav Amram 18, 2nd Floor, Beit Shemesh\n\n🗺️ Navigation with Waze:\nhttps://waze.com/ul/hsv8u7eths\n\n📞 Phone: 050-4164002${manageSuffix}`;
+
+                calendarLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventTitle)}&location=${encodeURIComponent(eventLocation)}&details=${encodeURIComponent(eventDesc)}&dates=${appointmentData.selectedSlot.startDateTime.replace(/[-:]/g,'').replace(/\.\d{3}/,'')}/${appointmentData.selectedSlot.endDateTime.replace(/[-:]/g,'').replace(/\.\d{3}/,'')}`;
 
                 // Show success step
                 goToStep('success');
